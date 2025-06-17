@@ -13,5 +13,8 @@ class TExcludeEsd extends Model
     protected $fillable = [
         'TExcludeEsd_EmpCd',
         'TExcludeEsd_EsdTy',
+        'TExcludeEsd_Remk',
+        'TExcludeEsd_Std',
+        'TExcludeEsd_Lstdt'
     ]; // Specify the fillable attributes if needed
 }

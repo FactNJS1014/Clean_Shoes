@@ -2,8 +2,7 @@
     <div class="flex items-center justify-center">
         <div class="w-[90%] max-w-5xl shadow-sm card bg-white mt-5">
             <h2 class="p-4 text-2xl font-semibold text-center text-gray-800">
-                แบบฟอร์มบันทึกผู้ที่ได้รับการยกเว้นในการ ESD
-                บางอย่างที่ไม่ได้เกี่ยวข้องกับในไลน์การผลิต
+                แบบฟอร์มบันทึกผู้ที่ได้รับการยกเว้นในการ Check ESD
             </h2>
 
             <div class="flex items-center justify-center w-[100%]">

@@ -20,7 +20,7 @@ class GetDataController extends Controller
         try {
             $data = DB::table('TExcludeEsd_Tbl as esdt')
             ->join('VEMPLOYEE_TBL as emp','esdt.TExcludeEsd_EmpCd','=','emp.VEMPLOYEE_ID')
-            ->select('esdt.*','emp.VEMPLOYEE_THFNAME','emp.VEMPLOYEE_THLNAME','emp.VEMPLOYEE_THPREFIX')
+            ->select('esdt.*','emp.VEMPLOYEE_THFNAME','emp.VEMPLOYEE_THLNAME','emp.VEMPLOYEE_THPREFIX','emp.VEMPLOYEE_SECTION')
             ->get();
 
             return response()->json($data);
@@ -37,7 +37,7 @@ class GetDataController extends Controller
 
         $query = DB::table('TExcludeEsd_Tbl as esdt')
             ->join('VEMPLOYEE_TBL as emp','esdt.TExcludeEsd_EmpCd','=','emp.VEMPLOYEE_ID')
-            ->select('esdt.*','emp.VEMPLOYEE_THFNAME','emp.VEMPLOYEE_THLNAME');
+            ->select('esdt.*','emp.VEMPLOYEE_THFNAME','emp.VEMPLOYEE_THLNAME','emp.VEMPLOYEE_SECTION');
 
         if(!empty($searchEmpid)){
             $query->where('esdt.TExcludeEsd_EmpCd' , 'LIKE','%'. $searchEmpid . '%');

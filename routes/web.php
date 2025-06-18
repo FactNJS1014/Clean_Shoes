@@ -15,3 +15,4 @@ Route::get('/{any}', function () {
  */
 
 Route::post('/insert-check',[ESDCheckInsertController::class,'insertCheck']);
+Route::post('/delete-check',[ESDCheckInsertController::class,'deleteCheck']);

@@ -1,8 +1,8 @@
 <template>
     <div class="flex items-center justify-center">
-        <div class="w-[50%] max-w-7xl shadow-sm card bg-white mt-5 ">
+        <div class="w-[100%] max-w-7xl shadow-sm card bg-white mt-5 ">
             <h2 class="p-4 text-2xl font-semibold text-center text-gray-800">
-                แบบฟอร์มบันทึกผู้ที่ได้รับการยกเว้นในการ Check ESD
+                แบบฟอร์มบันทึกผู้ที่ได้รับการยกเว้นในการ Check ESD แต่ละประเภท
             </h2>
 
             <div class="flex items-center justify-center w-[100%]">
@@ -55,21 +55,23 @@
 
     </div>
     <div class="flex items-center justify-center p-4">
-        <div class="w-[80%] max-w-7xl shadow-sm card bg-white mt-5 p-2">
-            <h2 class="mt-5 text-2xl font-semibold text-center">ตารางผู้ที่ได้รับการยกเว้น Check ESD</h2>
+        <div class="w-[100%] max-w-7xl shadow-sm card bg-white mt-5 p-2">
+            <h2 class="mt-5 text-2xl font-semibold text-center">ตารางผู้ที่ได้รับการยกเว้น Check ESD แต่ละประเภท</h2>
             <div class="flex items-center justify-end">
                 <input type="text" placeholder="ค้นหารหัสพนักงาน" class="input input-neutral text-[16px]"
                     @input="SearchFilterESD" v-model="esd_empid" />
             </div>
-            <div class="mt-5 overflow-y-auto border rounded-box border-base-content/5 bg-base-100 max-h-[400px]">
-                <table class="table w-full ">
+            <div class="mt-4 max-h-[400px] overflow-auto border border-gray-300 rounded">
+                <table class="table w-full min-w-[2000px] table-zebra">
                     <!-- head -->
                     <thead class="sticky top-0 z-10 text-lg">
                         <tr class="text-black bg-amber-300 text-[20px] text-center">
                             <th>รหัสพนักงาน</th>
                             <th>ชื่อ-สกุลพนักงาน</th>
                             <th>ประเภท ESD</th>
+                            <th>แผนก</th>
                             <th>หมายเหตุ</th>
+                            <th>Action</th>
                         </tr>
                         <!-- <tr class="bg-gray-200 ">
                             <th><input type="text" placeholder="Search Employee Code"
@@ -85,14 +87,20 @@
                     </thead>
                     <tbody>
                         <tr v-for="esd_exc, index in esd_db" :key="index" class="text-center">
-                            <td class="text-[18px] font-semibold">{{ esd_exc.TExcludeEsd_EmpCd }}</td>
+                            <td class="text-[18px] font-semibold"><div class="badge badge-info p-5">{{ esd_exc.TExcludeEsd_EmpCd }}</div>
+</td>
                             <td class="text-[18px] font-semibold">{{ esd_exc.VEMPLOYEE_THPREFIX }}{{
                                 esd_exc.VEMPLOYEE_THFNAME }}&nbsp;{{
                                     esd_exc.VEMPLOYEE_THLNAME }}</td>
-                            <td class="text-[18px] font-semibold">{{ esd_exc.TExcludeEsd_EsdTy }}</td>
+                            <td class="text-[18px] font-semibold"><div class="badge badge-neutral p-5">{{ esd_exc.TExcludeEsd_EsdTy }}</div></td>
+                            <td class="text-[18px] font-semibold">{{ esd_exc.VEMPLOYEE_SECTION }}</td>
                             <td class="text-[18px] font-semibold" v-if="esd_exc.TExcludeEsd_Remk !== null">{{
                                 esd_exc.TExcludeEsd_Remk }}</td>
-                            <td class="text-[18px] font-semibold text-error" v-else>ไม่มีข้อมูล</td>
+                            <td class="text-[18px] font-semibold text-error " v-else>ยังไม่มีข้อมูล</td>
+
+                            <td><button class="text[16px]  btn btn-error w-[100px]"
+                                    @click="DeleteData(esd_exc.TExcludeEsd_EmpCd, esd_exc.TExcludeEsd_EsdTy)">ลบข้อมูล</button>
+                            </td>
                         </tr>
 
                     </tbody>
@@ -158,7 +166,8 @@ const handleSubmit = () => {
             }
         ).then(res => {
             console.log(res.data)
-            if (res.data.data) {
+            if (res.data.status === 'Insert' && res.data.data) {
+
                 Swal.fire({
                     title: 'บันทึกเสร็จสิ้น',
                     icon: 'success',
@@ -172,6 +181,22 @@ const handleSubmit = () => {
                     remark.value = '';
                     location.reload()
                 })
+
+
+
+            } else if (res.data.status === 'IsHave') {
+
+                Swal.fire({
+                    title: 'มีข้อมูลอยู่แล้ว',
+                    icon: 'warning',
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    location.reload()
+                })
+
+
             } else {
                 Swal.fire({
                     title: 'บันทึกไม่ผ่าน',
@@ -184,6 +209,8 @@ const handleSubmit = () => {
                     location.reload()
                 })
             }
+
+
         })
 
 
@@ -220,6 +247,44 @@ const SearchFilterESD = () => {
         esd_db.value = res.data
 
     })
+}
+
+const DeleteData = (code, type) => {
+    console.log(code)
+    console.log(type)
+    axios.post('/CheckESD/delete-check',
+        {
+            code: code,
+            type: type
+        },
+        {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+    )
+        .then(res => {
+            console.log(res.data)
+            if (res.data) {
+                Swal.fire({
+                    title: 'ลบข้อมูลเสร็จสิ้น',
+                    icon: 'success',
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    location.reload()
+                })
+            } else {
+                Swal.fire({
+                    title: 'ลบไม่ผ่าน',
+                    icon: 'error',
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+        })
 }
 
 onMounted(() => {

@@ -34,6 +34,7 @@ class GetDataController extends Controller
 
     public function SearchCheck(Request $request){
         $searchEmpid = $request->input('empid');
+        $searchSection = $request->input('section');
 
         $query = DB::table('TExcludeEsd_Tbl as esdt')
             ->join('VEMPLOYEE_TBL as emp','esdt.TExcludeEsd_EmpCd','=','emp.VEMPLOYEE_ID')
@@ -42,9 +43,21 @@ class GetDataController extends Controller
         if(!empty($searchEmpid)){
             $query->where('esdt.TExcludeEsd_EmpCd' , 'LIKE','%'. $searchEmpid . '%');
         }
+        if(!empty($searchSection)){
+             $query->where('emp.VEMPLOYEE_SECTION' , $searchSection);
+        }
 
         $result = $query->get();
         return response()->json($result);
 
+    }
+
+    public function GetSection(){
+        $db_employee = DB::table('VEMPLOYEE_TBL')
+        ->select('VEMPLOYEE_SECTION')
+        ->distinct()
+        ->get();
+
+        return response()->json($db_employee);
     }
 }

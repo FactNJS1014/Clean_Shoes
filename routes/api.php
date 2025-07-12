@@ -9,3 +9,4 @@ use App\Http\Controllers\GetDataController;
  */
 Route::get('/data-check', [GetDataController::class, 'DataCheck']);
 Route::get('/search-check', [GetDataController::class, 'SearchCheck']);
+Route::get('/data-sec', [GetDataController::class, 'GetSection']);

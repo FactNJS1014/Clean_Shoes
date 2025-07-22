@@ -23,7 +23,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory('CheckESD'),
+  history: createWebHistory('Cleaning_Shoes'),
   routes
 });
 

@@ -70,7 +70,7 @@ const sect_data = ref([
 const selectedSection = ref(null); // ← ต้องมี
 
 const fetch_psc = () => {
-  axios.get("/CheckESD/api/get-procedure-clean").then((res) => {
+  axios.get("/Cleaning_Shoes/api/get-procedure-clean").then((res) => {
     psc_data.value = res.data;
 
     res.data.forEach((v) => {
@@ -85,7 +85,7 @@ const onSelectSection = () => {
   var sec = selectedSection.value.section;
 
   axios
-    .get("/CheckESD/api/filter-clean", {
+    .get("/Cleaning_Shoes/api/filter-clean", {
       params: {
         sec: sec,
       },

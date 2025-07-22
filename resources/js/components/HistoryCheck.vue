@@ -1,12 +1,12 @@
 <template>
   <div class="flex justify-center gap-1 p-2">
-    <div class="card bg-base-100 card-xs shadow-sm w-full">
+    <div class="w-full shadow-sm card bg-base-100 card-xs">
       <div class="card-body">
         <p class="text-[18px] font-medium text-center">
           <v-icon name="bi-table" scale="1.3" fill="#156064"></v-icon>
           ตารางแสดงข้อมูลประวัติการทำความสะอาดรองเท้า
         </p>
-        <div class="flex justify-end items-center p-2">
+        <div class="flex items-center justify-end p-2">
           <DatePicker
             v-model="date"
             date-format="yy-mm-dd"
@@ -63,7 +63,7 @@ const date = ref();
 const cln_data = ref([]);
 
 const fetch_cleaning_user_all = () => {
-  axios.get("/CheckESD/api/data-cleaning-all").then((res) => {
+  axios.get("/Cleaning_Shoes/api/data-cleaning-all").then((res) => {
     console.log(res.data);
     cleaning_user.value = res.data;
   });
@@ -74,7 +74,7 @@ const SearchDate = () => {
   console.log(date_filter);
 
   axios
-    .get("/CheckESD/api/filter-date-check", {
+    .get("/Cleaning_Shoes/api/filter-date-check", {
       params: {
         date: date_filter,
       },
@@ -99,7 +99,7 @@ const SearchDate = () => {
 };
 
 const fetch_cleanl = () => {
-  axios.get("/CheckESD/api/get-cleanl").then((res) => {
+  axios.get("/Cleaning_Shoes/api/get-cleanl").then((res) => {
     // cln_data.value = res.data;
     // console.log(cln_data.value);
     const merge = {};

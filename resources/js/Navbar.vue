@@ -1,19 +1,10 @@
 <template>
-  <div class="flex justify-center items-center p-4">
-    <ul class="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box gap-3">
+  <div class="flex items-center justify-center p-4">
+    <ul class="gap-3 menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box">
+
       <li>
         <router-link
           to="/"
-          exact-active-class="bg-[#ffc300] text-[#000814] font-bold text-[16px]"
-          class="text-[16px] font-semibold"
-        >
-          <v-icon name="fc-settings" scale="1.2"></v-icon>
-          ตั้งค่าผู้ที่ไม่ต้องตรวจสอบ Wrist Tap
-        </router-link>
-      </li>
-      <li>
-        <router-link
-          to="/historyAll"
           exact-active-class="bg-[#ffc300] text-[#000814] font-bold text-[16px]"
           class="text-[16px] font-semibold"
         >

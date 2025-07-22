@@ -5,13 +5,9 @@ import HistoryBySection from "./components/HistoryCheckBySection.vue"
 
 
 const routes = [
+
     {
         path: "/",
-        name: "index",
-        component: Setting_Wrist,
-    },
-    {
-        path: "/historyAll",
         name: "history1",
         component: HistoryCheck,
     },

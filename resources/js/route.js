@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Setting_Wrist from './components/Wristtap.vue'
+// import Setting_Wrist from './components/Wristtap.vue'
 import HistoryCheck from "./components/HistoryCheck.vue";
 import HistoryBySection from "./components/HistoryCheckBySection.vue"
 

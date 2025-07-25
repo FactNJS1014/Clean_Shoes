@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 // Ensure this model exists if you want to use it
 
 class GetDataController extends Controller
@@ -89,6 +90,7 @@ class GetDataController extends Controller
 
     public function FilterDateCheck(Request $request)
     {
+
         $date_filter = $request->input('date');
 
         $filter_db = DB::table('TSCLEANL_TBL as tscl')
@@ -110,10 +112,11 @@ class GetDataController extends Controller
 
     public function GetCleanL()
     {
+        $now = Carbon::now()->format('Y-m-d');
         $get_cleanl = DB::table('TSCLEANL_TBL as tscl')
             ->join('VEMPLOYEE_TBL as emp', 'tscl.TSCLEANL_EMPNO', '=', 'emp.VEMPLOYEE_ID')
             ->select('tscl.*', 'emp.VEMPLOYEE_THFNAME', 'emp.VEMPLOYEE_THLNAME', 'emp.VEMPLOYEE_THPREFIX', 'emp.VEMPLOYEE_SECTION')
-
+            ->whereDate('tscl.TSCLEANL_LSTDT', $now)
             ->get();
 
         return response()->json($get_cleanl);
@@ -126,68 +129,94 @@ class GetDataController extends Controller
 
     public function GetProcedureCleanOfDay()
     {
-        $pdo = DB::getPdo();
-        $stmt = $pdo->prepare('EXEC dbo.PSCLEAN_LIST_OVERDAY');
-        $stmt->execute();
+        // เรียก stored procedure และได้รายการ EMPID
+        $procData = DB::select('EXEC dbo.PSCLEAN_LIST_OVERDAY @DAYS = 0');
 
-        $allResults = [];
+        // ดึงข้อมูลจาก TSCLEANH_TBL โดยใช้ EMPNO เป็น key เพื่อ join
+        $userData = DB::table('TSCLEANH_TBL')->select('TSCLEANH_EMPNO', 'TSCLEANH_LSTDT')->get()->keyBy('TSCLEANH_EMPNO');
 
-        do {
-            // สำคัญ!! → เช็คว่ามีผลลัพธ์หรือไม่
-            if ($stmt->columnCount() > 0) {
-                $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-                if (!empty($rows)) {
-                    $allResults[] = $rows;
-                }
+        $merged = [];
+
+        foreach ($procData as $row) {
+            $row = (array) $row;
+            $empId = $row['EMPID'] ?? null; // field จาก procedure
+
+            if ($empId && isset($userData[$empId])) {
+                // ถ้ามีข้อมูลใน table ให้เพิ่ม field LSTDT เข้าไป
+                $row['TSCLEANH_LSTDT'] = $userData[$empId]->TSCLEANH_LSTDT ?? null;
+            } else {
+                // ถ้าไม่มี match ให้ใส่ค่า null
+                $row['TSCLEANH_LSTDT'] = null;
             }
-        } while ($stmt->nextRowset());
 
-        if (empty($allResults)) {
-            return response()->json(['message' => 'No
-            data returned.']);
+            $merged[] = $row;
         }
 
-        return response()->json($allResults);
+        return response()->json($merged);
     }
 
     public function FilterCleanPSC(Request $request)
     {
-        $section = $request->input('sec'); // เช่น A01
+        $sect = $request->input('sec'); // รับ sect จาก frontend
 
-        $pdo = DB::getPdo();
-        $stmt = $pdo->prepare('EXEC dbo.PSCLEAN_LIST_OVERDAY');
-        $stmt->execute();
+        // ดึงข้อมูลจาก stored procedure
+        $procData = DB::select('EXEC dbo.PSCLEAN_LIST_OVERDAY @DAYS = 0');
 
-        $filter_db_clean = [];
+        // ดึงข้อมูลจาก table
+        $userData = DB::table('TSCLEANH_TBL')
+            ->select('TSCLEANH_EMPNO', 'TSCLEANH_LSTDT')
+            ->get()
+            ->keyBy('TSCLEANH_EMPNO');
 
-        do {
-            if ($stmt->columnCount() > 0) {
-                $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-                if (!empty($rows)) {
-                    $filter_db_clean = array_merge($filter_db_clean, $rows);
-                }
+        $merged = [];
+
+        foreach ($procData as $row) {
+            $row = (array) $row;
+
+            // Filter ด้วย SECTCD หลังจาก query จาก procedure
+            if (isset($row['SECTCD']) && $row['SECTCD'] != $sect) {
+                continue; // ข้ามถ้าไม่ตรง sect ที่ต้องการ
             }
-        } while ($stmt->nextRowset());
 
-        // กรองข้อมูลตาม CLEAN_SECTION
-        if ($section) {
-            $filter_db_clean = array_filter($filter_db_clean, function ($row) use ($section) {
-                return isset($row['SECTCD']) && $row['SECTCD'] === $section;
-            });
-            $filter_db_clean = array_values($filter_db_clean); // reset array index
+            $empId = $row['EMPID'] ?? null;
+
+            if ($empId && isset($userData[$empId])) {
+                $row['TSCLEANH_LSTDT'] = $userData[$empId]->TSCLEANH_LSTDT ?? null;
+            } else {
+                $row['TSCLEANH_LSTDT'] = null;
+            }
+
+            $merged[] = $row;
         }
 
-        if (empty($filter_db_clean)) {
-            return response()->json(['message' => 'No data returned.']);
+        return response()->json($merged);
+    }
+
+    public function JoinDataCleanUser()
+    {
+        // เรียก stored procedure และได้รายการ EMPID
+        $procData = DB::select('EXEC dbo.PSCLEAN_LIST_OVERDAY @DAYS = 0');
+
+        // ดึงข้อมูลจาก TSCLEANH_TBL โดยใช้ EMPNO เป็น key เพื่อ join
+        $userData = DB::table('TSCLEANH_TBL')->select('TSCLEANH_EMPNO', 'TSCLEANH_LSTDT')->get()->keyBy('TSCLEANH_EMPNO');
+
+        $merged = [];
+
+        foreach ($procData as $row) {
+            $row = (array) $row;
+            $empId = $row['EMPID'] ?? null; // field จาก procedure
+
+            if ($empId && isset($userData[$empId])) {
+                // ถ้ามีข้อมูลใน table ให้เพิ่ม field LSTDT เข้าไป
+                $row['TSCLEANH_LSTDT'] = $userData[$empId]->TSCLEANH_LSTDT ?? null;
+            } else {
+                // ถ้าไม่มี match ให้ใส่ค่า null
+                $row['TSCLEANH_LSTDT'] = null;
+            }
+
+            $merged[] = $row;
         }
 
-        return response()->json($filter_db_clean);
+        return response()->json($merged);
     }
-
-    public function JoinDataCleanUser(){
-        $query = DB::select('EXEC dbo.PSCLEAN_LIST_OVERDAY ');
-        return response()->json($query);
-    }
-
-    
 }

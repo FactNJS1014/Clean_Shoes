@@ -4,7 +4,7 @@ import router from "./route.js";
 import App from "./App.vue";
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
-
+import { definePreset } from '@primeuix/themes';
 
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -23,11 +23,31 @@ import { MdSaveas , FcSettings ,FaHistory ,CiColorIcn,BiCalendarDateFill ,BiTabl
 addIcons(MdSaveas,FcSettings,FaHistory,CiColorIcn ,BiCalendarDateFill ,BiTable )
 const app = createApp(App);
 app.component('v-icon', OhVueIcon);
+const MyPreset = definePreset(Aura, {
+    //Your customizations, see the following sections for examples
+    semantic: {
+        primary: {
+            50: '{zinc.50}',
+            100: '{zinc.100}',
+            200: '{zinc.200}',
+            300: '{zinc.300}',
+            400: '{zinc.400}',
+            500: '{zinc.500}',
+            600: '{zinc.600}',
+            700: '{zinc.700}',
+            800: '{zinc.800}',
+            900: '{zinc.900}',
+            950: '{zinc.950}'
+        }
+    },
+
+});
+
 app.use(PrimeVue, {
     theme: {
-        preset: Aura
+        preset: MyPreset
     }
-});
+ });
 app.component('DataTable',DataTable)
 app.component('Column', Column)
 app.component('ColumnGroup', ColumnGroup)

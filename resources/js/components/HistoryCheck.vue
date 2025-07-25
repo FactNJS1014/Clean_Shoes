@@ -22,27 +22,84 @@
             tableStyle="min-width: 100px"
             showGridlines
             paginator
-            :rows="10"
-            :rowsPerPageOptions="[10, 20, 50]"
+            :rows="7"
+            :rowsPerPageOptions="[7,10, 20, 50]"
           >
             <Column
               field="TSCLEANL_EMPNO"
               header="รหัสพนักงาน"
               class="text-[16px]"
+              :pt="{
+                    headerCell: {
+                      class:'header-cell text-lg font-semibold',
+                      id:'z',
+                      prime: 'vue',
+                      style: {
+                         background: '#b8e6fe',
+                        color: '#1f2937',
+                      }
+
+                    },
+                  }"
             ></Column>
-            <Column header="ชื่อ-นามสกุล" class="text-[16px]">
+            <Column header="ชื่อ-นามสกุล" class="text-[16px]" :pt="{
+                    headerCell: {
+                      class:'header-cell text-lg font-semibold',
+                      id:'z',
+                      prime: 'vue',
+                      style: {
+                         background: '#b8e6fe',
+                        color: '#1f2937',
+                      }
+
+                    },
+                  }">
               <template #body="{ data }">
                 {{ data.VEMPLOYEE_THPREFIX }}{{ data.VEMPLOYEE_THFNAME }}&nbsp;
                 {{ data.VEMPLOYEE_THLNAME }}
               </template>
             </Column>
-            <Column field="VEMPLOYEE_SECTION" header="แผนก" class="text-[16px]"></Column>
+            <Column field="VEMPLOYEE_SECTION" header="แผนก" class="text-[16px]" :pt="{
+                    headerCell: {
+                      class:'header-cell text-lg font-semibold',
+                      id:'z',
+                      prime: 'vue',
+                      style: {
+                         background: '#b8e6fe',
+                        color: '#1f2937',
+                      }
+
+                    },
+                  }"></Column>
             <Column
               field="count"
               header="จำนวนครั้งในการทำความสะอาดรองเท้า"
               class="text-[16px]"
+              :pt="{
+                    headerCell: {
+                      class:'header-cell text-lg font-semibold',
+                      id:'z',
+                      prime: 'vue',
+                      style: {
+                         background: '#b8e6fe',
+                        color: '#1f2937',
+                      }
+
+                    },
+                  }"
             ></Column>
-            <Column header="วัน-เวลาทำความสะอาด" class="text-[16px]">
+            <Column header="วัน-เวลาทำความสะอาด" class="text-[16px]" :pt="{
+                    headerCell: {
+                      class:'header-cell text-lg font-semibold',
+                      id:'z',
+                      prime: 'vue',
+                      style: {
+                         background: '#b8e6fe',
+                        color: '#1f2937',
+                      }
+
+                    },
+                  }">
               <template #body="{ data }">
                 {{ formatt_Date(data.TSCLEANL_LSTDT) }}
               </template>
@@ -123,7 +180,7 @@ const fetch_cleanl = () => {
 };
 
 const formatt_Date = (value) => {
-  const date_js = dayjs(value).format("YYYY-MM-DD");
+  const date_js = dayjs(value).format("YYYY-MM-DD HH:mm:ss");
   return date_js;
 };
 

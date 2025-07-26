@@ -63,7 +63,7 @@
                   }"></Column>
             <Column
               field="DAYS"
-              header="จำนวนครั้งที่ทำความสะอาดต่อวัน"
+              header="ประวัติย้อนหลังวันที่ทำความสะอาดล่าสุด"
               class="text-[16px]"
              :pt="{
                     headerCell: {
@@ -96,7 +96,7 @@
                   }"
             >
                 <template #body="{ data }">
-                    <span v-if="data.TSCLEANH_LSTDT !== null"><Tag severity="success" :value="formattdated(data.TSCLEANH_LSTDT) " class="text-[16px]"></Tag></span>
+                    <span v-if="data.TSCLEANH_LSTDT !== null && data.DAYS <= 7"><Tag severity="success" :value="formattdated(data.TSCLEANH_LSTDT) " class="text-[16px]"></Tag></span>
                     <span v-else><Tag severity="danger" value="ยังไม่มีการทำความสะอาดรองเท้า" class="text-[16px]"></Tag></span>
                 </template>
             </Column>

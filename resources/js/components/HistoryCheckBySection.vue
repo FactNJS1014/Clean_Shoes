@@ -25,80 +25,102 @@
             :rows="8"
             :rowsPerPageOptions="[8, 10, 20, 32]"
           >
-            <Column field="SECTCD" header="แผนก (Section)" class="text-[16px]" :pt="{
-                    headerCell: {
-                      class:'header-cell text-lg font-semibold',
-                      id:'z',
-                      prime: 'vue',
-                      style: {
-                         background: '#b8e6fe',
-                        color: '#1f2937',
-                      }
-
-                    },
-                  }"></Column>
-            <Column field="EMPID" header="รหัสพนักงาน" class="text-[16px]" :pt="{
-                    headerCell: {
-                      class:'header-cell text-lg font-semibold',
-                      id:'z',
-                      prime: 'vue',
-                      style: {
-                         background: '#b8e6fe',
-                        color: '#1f2937',
-                      }
-
-                    },
-                  }"></Column>
-            <Column field="EMPNM" header="ชื่อ-สกุลพนักงาน" class="text-[16px]" :pt="{
-                    headerCell: {
-                      class:'header-cell text-lg font-semibold',
-                      id:'z',
-                      prime: 'vue',
-                      style: {
-                         background: '#b8e6fe',
-                        color: '#1f2937',
-                      }
-
-                    },
-                  }"></Column>
+            <Column
+              field="SECTCD"
+              header="แผนก (Section)"
+              class="text-[16px]"
+              :pt="{
+                headerCell: {
+                  class: 'header-cell text-lg font-semibold',
+                  id: 'z',
+                  prime: 'vue',
+                  style: {
+                    background: '#b8e6fe',
+                    color: '#1f2937',
+                  },
+                },
+              }"
+            ></Column>
+            <Column
+              field="EMPID"
+              header="รหัสพนักงาน"
+              class="text-[16px]"
+              :pt="{
+                headerCell: {
+                  class: 'header-cell text-lg font-semibold',
+                  id: 'z',
+                  prime: 'vue',
+                  style: {
+                    background: '#b8e6fe',
+                    color: '#1f2937',
+                  },
+                },
+              }"
+            ></Column>
+            <Column
+              field="EMPNM"
+              header="ชื่อ-สกุลพนักงาน"
+              class="text-[16px]"
+              :pt="{
+                headerCell: {
+                  class: 'header-cell text-lg font-semibold',
+                  id: 'z',
+                  prime: 'vue',
+                  style: {
+                    background: '#b8e6fe',
+                    color: '#1f2937',
+                  },
+                },
+              }"
+            ></Column>
             <Column
               field="DAYS"
               header="ประวัติย้อนหลังวันที่ทำความสะอาดล่าสุด"
               class="text-[16px]"
-             :pt="{
-                    headerCell: {
-                      class:'header-cell text-lg font-semibold',
-                      id:'z',
-                      prime: 'vue',
-                      style: {
-                        background: '#b8e6fe',
-                        color: '#1f2937',
-                      }
-
-                    },
-                  }"
+              :pt="{
+                headerCell: {
+                  class: 'header-cell text-lg font-semibold',
+                  id: 'z',
+                  prime: 'vue',
+                  style: {
+                    background: '#b8e6fe',
+                    color: '#1f2937',
+                  },
+                },
+              }"
             ></Column>
             <Column
               field="TSCLEANH_LSTDT"
               header="วันที่ทำความสะอาดล่าสุด"
               class="text-[16px]"
-             :pt="{
-                    headerCell: {
-                      class:'header-cell text-lg font-semibold',
-                      id:'z',
-                      prime: 'vue',
-                      style: {
-                        background: '#b8e6fe',
-                        color: '#1f2937',
-                      }
-
-                    },
-                  }"
+              :pt="{
+                headerCell: {
+                  class: 'header-cell text-lg font-semibold',
+                  id: 'z',
+                  prime: 'vue',
+                  style: {
+                    background: '#b8e6fe',
+                    color: '#1f2937',
+                  },
+                },
+              }"
             >
-                <template #body="{ data }">
-                    <span v-if="data.TSCLEANH_LSTDT !== null && data.DAYS <= 7"><Tag severity="success" :value="formattdated(data.TSCLEANH_LSTDT) " class="text-[16px]"></Tag></span>
-                    <span v-else><Tag severity="danger" value="ยังไม่มีการทำความสะอาดรองเท้า" class="text-[16px]"></Tag></span>
-                </template>
+              <template #body="{ data }">
+                <span v-if="data.TSCLEANH_LSTDT !== null && data.DAYS <= 7"
+                  ><Tag
+                    severity="success"
+                    :value="formattdated(data.TSCLEANH_LSTDT)"
+                    class="text-[16px]"
+                  ></Tag
+                ></span>
+                <span v-else
+                  ><Tag
+                    severity="danger"
+                    value="ยังไม่มีการทำความสะอาดรองเท้า"
+                    class="text-[16px]"
+                  ></Tag
+                ></span>
+              </template>
             </Column>
           </DataTable>
         </div>
@@ -140,7 +162,6 @@ const selectedSection = ref(null); // ← ต้องมี
 
 const fetch_psc = () => {
   axios.get("/Cleaning_Shoes/api/get-procedure-clean").then((res) => {
-
     res.data.forEach((item) => {
       psc_data.value.push({
         SECTCD: item.SECTCD,
@@ -149,7 +170,6 @@ const fetch_psc = () => {
         DAYS: item.DAYS,
         TSCLEANH_LSTDT: item.TSCLEANH_LSTDT,
       });
-
     });
   });
 };
@@ -170,7 +190,7 @@ const onSelectSection = () => {
 };
 const formattdated = (item) => {
   const date = dayjs(item).format("YYYY-MM-DD HH:mm:ss");
-    return date;
+  return date;
 };
 
 onMounted(() => {

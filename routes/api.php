@@ -16,3 +16,4 @@ Route::get('/get-cleanl',[GetDataController::class, 'GetCleanL']);
 Route::get('/get-procedure-clean',[GetDataController::class, 'GetProcedureCleanOfDay']);
 Route::get('/filter-clean',[GetDataController::class, 'FilterCleanPSC']);
 Route::get('/join-data-clean',[GetDataController::class, 'JoinDataCleanUser']);
+Route::get('/get-section-details/{section}',[GetDataController::class, 'GetCleaningBySection']);

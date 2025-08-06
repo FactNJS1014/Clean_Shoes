@@ -19,8 +19,8 @@ import Select from 'primevue/select';
 
 // import router from "./router";
 import { OhVueIcon, addIcons } from 'oh-vue-icons';
-import { MdSaveas , FcSettings ,FaHistory ,CiColorIcn,BiCalendarDateFill ,BiTable   } from "oh-vue-icons/icons";
-addIcons(MdSaveas,FcSettings,FaHistory,CiColorIcn ,BiCalendarDateFill ,BiTable )
+import { MdSaveas , FcSettings ,FaHistory ,CiColorIcn,BiCalendarDateFill ,BiTable , MdSunny, FaMoon,IoDocumentText  } from "oh-vue-icons/icons";
+addIcons(MdSaveas,FcSettings,FaHistory,CiColorIcn ,BiCalendarDateFill ,BiTable, MdSunny,FaMoon,IoDocumentText);
 const app = createApp(App);
 app.component('v-icon', OhVueIcon);
 const MyPreset = definePreset(Aura, {

@@ -194,29 +194,53 @@ class GetDataController extends Controller
 
     public function JoinDataCleanUser()
     {
-        // เรียก stored procedure และได้รายการ EMPID
+        try {
+            // Execute the stored procedure
+            $results = DB::select('EXEC [dbo].[PSCLEAN_LIST_OVERDAY] @DAYS = 0');
+
+            // Group data where DAYS > 7 by SECTCD
+            $groupedData = collect($results)
+                ->filter(fn($row) => $row->DAYS > 7)
+                ->groupBy('SECTCD');
+
+            return response()->json($groupedData);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function GetCleaningBySection($section)
+    {
+         // ดึงข้อมูลจาก stored procedure
         $procData = DB::select('EXEC dbo.PSCLEAN_LIST_OVERDAY @DAYS = 0');
 
-        // ดึงข้อมูลจาก TSCLEANH_TBL โดยใช้ EMPNO เป็น key เพื่อ join
-        $userData = DB::table('TSCLEANH_TBL')->select('TSCLEANH_EMPNO', 'TSCLEANH_LSTDT')->get()->keyBy('TSCLEANH_EMPNO');
+        // ดึงข้อมูลจาก table
+        $userData = DB::table('TSCLEANH_TBL')
+            ->select('TSCLEANH_EMPNO', 'TSCLEANH_LSTDT')
+            ->get()
+            ->keyBy('TSCLEANH_EMPNO');
 
-        $merged = [];
+        $data = [];
 
         foreach ($procData as $row) {
             $row = (array) $row;
-            $empId = $row['EMPID'] ?? null; // field จาก procedure
+
+            // Filter ด้วย SECTCD หลังจาก query จาก procedure
+            if (isset($row['SECTCD']) && $row['SECTCD'] != $section) {
+                continue; // ข้ามถ้าไม่ตรง sect ที่ต้องการ
+            }
+
+            $empId = $row['EMPID'] ?? null;
 
             if ($empId && isset($userData[$empId])) {
-                // ถ้ามีข้อมูลใน table ให้เพิ่ม field LSTDT เข้าไป
                 $row['TSCLEANH_LSTDT'] = $userData[$empId]->TSCLEANH_LSTDT ?? null;
             } else {
-                // ถ้าไม่มี match ให้ใส่ค่า null
                 $row['TSCLEANH_LSTDT'] = null;
             }
 
-            $merged[] = $row;
+            $data[] = $row;
         }
 
-        return response()->json($merged);
+        return response()->json($data);
     }
 }

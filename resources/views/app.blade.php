@@ -1207,9 +1207,10 @@
 
     <style>
         body{
-            background-color: #7dcea0;
-            height: 1000vh;
-            overflow: hidden;
+            background-color: #455a64;
+            height: auto;
+            /* overflow: hidden; */
+            overflow: auto
         }
     </style>
 </head>

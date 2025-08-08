@@ -23,10 +23,12 @@
           <div class="flex items-center justify-between">
             <div>
               <span class="text-[16px] text-white mr-6"
-                >Not Checked: {{ section.filter((user) => user.DAYS > 7).length }}</span
+                ><div class="badge bg-[#f87171] badge-xs mr-1"></div>
+                Not Checked: {{ section.filter((user) => user.DAYS > 7).length }}</span
               >
               <span class="text-[16px] text-white"
-                >Checked: {{ section.filter((user) => user.DAYS <= 7).length }}</span
+                ><div class="badge bg-[#4ade80] badge-xs mr-1"></div>
+                Checked: {{ section.filter((user) => user.DAYS <= 7).length }}</span
               >
             </div>
 

@@ -209,37 +209,44 @@ class GetDataController extends Controller
         }
     }
 
+    // public function GetCleaningBySection($section)
+    // {
+    //     // ดึงข้อมูลจาก stored procedure
+    //     $procData = DB::select('EXEC dbo.PSCLEAN_LIST_OVERDAY @DAYS = 0');
+
+
+    //     $data = [];
+
+    //     foreach ($procData as $row) {
+    //         $row = (array) $row;
+
+    //         // Filter ด้วย SECTCD หลังจาก query จาก procedure
+    //         if (isset($row['SECTCD']) && $row['SECTCD'] != $section) {
+    //             continue; // ข้ามถ้าไม่ตรง sect ที่ต้องการ
+    //         }
+
+
+
+    //         $data[] = $row;
+    //     }
+
+    //     return response()->json($data);
+    // }
     public function GetCleaningBySection($section)
     {
-         // ดึงข้อมูลจาก stored procedure
         $procData = DB::select('EXEC dbo.PSCLEAN_LIST_OVERDAY @DAYS = 0');
 
-        // ดึงข้อมูลจาก table
-        $userData = DB::table('TSCLEANH_TBL')
-            ->select('TSCLEANH_EMPNO', 'TSCLEANH_LSTDT')
-            ->get()
-            ->keyBy('TSCLEANH_EMPNO');
-
-        $data = [];
-
-        foreach ($procData as $row) {
-            $row = (array) $row;
-
-            // Filter ด้วย SECTCD หลังจาก query จาก procedure
-            if (isset($row['SECTCD']) && $row['SECTCD'] != $section) {
-                continue; // ข้ามถ้าไม่ตรง sect ที่ต้องการ
-            }
-
-            $empId = $row['EMPID'] ?? null;
-
-            if ($empId && isset($userData[$empId])) {
-                $row['TSCLEANH_LSTDT'] = $userData[$empId]->TSCLEANH_LSTDT ?? null;
-            } else {
-                $row['TSCLEANH_LSTDT'] = null;
-            }
-
-            $data[] = $row;
-        }
+        $data = collect($procData)
+            ->map(function ($row) {
+                return (array) $row;
+            })
+            ->filter(function ($row) use ($section) {
+                return isset($row['SECTCD']) && $row['SECTCD'] == $section;
+            })
+            // ->sortBy('DAYS') // เรียงจากน้อยไปมาก
+            ->sortByDesc('DAYS') // เรียงจากมากไปน้อย
+            ->values()
+            ->all();
 
         return response()->json($data);
     }

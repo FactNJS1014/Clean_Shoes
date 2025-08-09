@@ -1,4 +1,3 @@
-<!-- components/SectionBarChart.vue -->
 <template>
   <Bar :data="chartData" :options="chartOptions" />
 </template>
@@ -14,11 +13,8 @@ import {
   CategoryScale,
   LinearScale,
 } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
-import ChartDataLabels from "chartjs-plugin-datalabels"; // ✅ import plugin
-import { display } from "@primeuix/themes/aura/inplace";
-
-// ✅ register plugin
 ChartJS.register(
   Title,
   Tooltip,
@@ -34,18 +30,31 @@ const props = defineProps({
   sectionData: Array,
 });
 
-const total = props.sectionData.length;
+const total = props.sectionData.length || 1;
 const le7 = props.sectionData.filter((emp) => emp.DAYS <= 7).length;
 const gt7 = props.sectionData.filter((emp) => emp.DAYS > 7).length;
 
+const le7Percent = (le7 / total) * 100;
+const gt7Percent = 100 - le7Percent;
+
 const chartData = {
-  labels: ["จำนวนคนที่ทำความสะอาดรองเท้า", "จำนวนคนที่ยังไม่ได้ทำความสะอาดรองเท้า"],
+  labels: [""], // ✅ ให้เหลือ label เดียว
   datasets: [
     {
-      //   label: `Section: ${props.sectionName}`,
-      data: [le7, gt7],
-      backgroundColor: ["#4ade80", "#f87171"],
-      barThickness: 30,
+      label: "Cleaned in 7 Days",
+      data: [Math.round(le7Percent)],
+      backgroundColor: "#4ade80",
+      stack: "stack1",
+      barThickness: 50, // กำหนดความหนาของแท่ง
+      maxBarThickness: 60, // กำหนดความหนาสูงสุด
+    },
+    {
+      label: "Over 7 Days",
+      data: [Math.round(gt7Percent)],
+      backgroundColor: "#f87171",
+      stack: "stack1",
+      barThickness: 50, // กำหนดความหนาของแท่ง
+      maxBarThickness: 60, // กำหนดความหนาสูงสุด
     },
   ],
 };
@@ -59,53 +68,40 @@ const chartOptions = {
       display: true,
       text: `Section: ${props.sectionName}`,
       color: "#ffffff",
-      font: { size: 16 },
+      font: { size: 20, weight: "bold" },
     },
     datalabels: {
       color: "#ffffff",
       font: {
-        size: 18,
+        size: 16,
         weight: "bold",
       },
       anchor: "center",
       align: (context) => {
-        const dataset = context.dataset;
-        const value = dataset.data[context.dataIndex];
-        const total = le7 + gt7;
-        const percent = (value / total) * 100;
-
-        return percent === 100 ? "center" : "end";
+        // ✅ ถ้าครบ 100% ให้อยู่ตรงกลาง
+        return context.dataset.data[context.dataIndex] === 100 ? "center" : "end";
       },
-      formatter: (value, ctx) => {
-        const total = le7 + gt7;
-        const percent = ((value / total) * 100).toFixed(1);
-        return `${percent}%`;
+      clamp: true,
+      formatter: (value, context) => {
+        // ✅ แสดงเฉพาะแท่งสีเขียว (datasetIndex = 0)
+        if (context.datasetIndex === 0) {
+          return `${le7} / ${total}`;
+        }
+        return ""; // ไม่แสดงอะไรในแท่งสีแดง
       },
     },
   },
   scales: {
     x: {
-      min: 0,
-      max: total,
-      beginAtZero: true,
-      ticks: {
-        stepSize: 1,
-        precision: 0,
-        color: "#ffffff",
-        display: false,
-      },
-      grid: {
-        display: false,
-      },
+      stacked: true,
+      max: 100,
+      ticks: { display: false },
+      grid: { display: false },
     },
     y: {
-      ticks: {
-        color: "#ffffff",
-        display: false,
-      },
-      grid: {
-        display: false,
-      },
+      stacked: true,
+      ticks: { display: false },
+      grid: { display: false },
     },
   },
 };

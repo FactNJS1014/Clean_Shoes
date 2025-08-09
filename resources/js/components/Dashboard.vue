@@ -1,14 +1,16 @@
 <template>
   <div class="p-2 flex items-center">
     <h3 class="text-[22px] font-semibold text-white mb-4">
-      Cleanig Shoes Dashboard (ตารางแสดงข้อมูลทำความสะอาดรองเท้าแต่ละแผนก) , Shift:&nbsp;
+      Cleanig shoes data for each department within a 7 days period
+      (ตารางแสดงข้อมูลควบคุมทำความสะอาดรองเท้าของแต่ละแผนกภายในระยะเวลา 7 วัน) ,
+      Shift:&nbsp;
       <span v-if="shift === 'DAYS'">
         <v-icon name="md-sunny" fill="#ffd60a" scale="1.2"></v-icon>
-        <span class="text-[20px] font-bold text-white">DAYS</span>
+        <span class="text-[20px] font-bold text-white ms-1">DAYS</span>
       </span>
       <span v-else>
         <v-icon name="fa-moon" fill="#ffd60a" scale="1.2"></v-icon>
-        <span class="text-[20px] font-bold text-[white">NIGHT</span>
+        <span class="text-[20px] font-bold text-white ms-1">NIGHT</span>
       </span>
     </h3>
   </div>
@@ -22,14 +24,15 @@
         <div class="card-body">
           <div class="flex items-center justify-between">
             <div>
-              <span class="text-[16px] text-white mr-6"
-                ><div class="badge bg-[#f87171] badge-xs mr-1"></div>
-                Not Checked: {{ section.filter((user) => user.DAYS > 7).length }}</span
+              <span><div class="badge bg-[#f87171] badge-xs mr-1 mb-3"></div></span>
+              <span class="text-[20px] text-white font-semibold">
+                Over: {{ section.filter((user) => user.DAYS > 7).length }} /
+                {{ section.length }}</span
               >
-              <span class="text-[16px] text-white"
+              <!-- <span class="text-[16px] text-white"
                 ><div class="badge bg-[#4ade80] badge-xs mr-1"></div>
                 Checked: {{ section.filter((user) => user.DAYS <= 7).length }}</span
-              >
+              > -->
             </div>
 
             <button class="btn btn-info" @click="showDetailsBySection(index)">
@@ -123,7 +126,7 @@
               },
             }"
           ></Column>
-          <Column
+          <!-- <Column
             field="TSCLEANH_LSTDT"
             header="วันที่ทำความสะอาดล่าสุด"
             class="text-[16px]"
@@ -156,7 +159,7 @@
                 ></Tag>
               </span>
             </template>
-          </Column>
+          </Column> -->
         </DataTable>
       </div>
     </div>
@@ -210,6 +213,7 @@ const showDetailsBySection = (sectionCode) => {
   // Fetch and display the details for the selected section
   axios
     .get(`/Cleaning_Shoes/api/get-section-details/${sectionCode}`)
+    // .get(`/Cleaning_Shoes/api/get-section-details/${sectionCode}`)
     .then((response) => {
       // Assuming response.data contains the details for the section
       // You can update the modal content here with the fetched data
